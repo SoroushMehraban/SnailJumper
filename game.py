@@ -1,12 +1,8 @@
 from sys import exit
-import pygame
 from random import randint, choice
-
-config = {
-    'title': "Snail Jumper",
-    'screen_width': 604,
-    'screen_height': 800
-}
+from player import Player
+from variables import global_variables
+import pygame
 
 
 def display_score():
@@ -21,72 +17,6 @@ def display_best_score():
     score_surf = game_font.render(f"BScore: {best_score}", False, (64, 64, 64))
     score_rect = score_surf.get_rect(center=(520, 100))
     screen.blit(score_surf, score_rect)
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-
-        # loading images
-        player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
-        player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
-
-        # rotating -90 degree and scaling by factor of 0.5
-        player_walk1 = pygame.transform.rotozoom(player_walk1, -90, 0.5)
-        player_walk2 = pygame.transform.rotozoom(player_walk2, -90, 0.5)
-
-        # flipping vertically
-        player_walk1 = pygame.transform.flip(player_walk1, flip_x=False, flip_y=True)
-        player_walk2 = pygame.transform.flip(player_walk2, flip_x=False, flip_y=True)
-
-        self.player_walk = [player_walk1, player_walk2]
-        self.player_jump = pygame.image.load('graphics/Player/jump.png').convert_alpha()
-
-        self.player_index = 0
-
-        self.image = self.player_walk[self.player_index]
-        self.rect = self.image.get_rect(midleft=(177, 656))
-
-        self.player_gravity = 'left'
-        self.gravity = 0
-
-    def player_input(self):
-        for pygame_event in events:
-            if pygame_event.type == pygame.KEYDOWN:
-                if pygame_event.key == pygame.K_SPACE:
-                    self.player_gravity = "left" if self.player_gravity == 'right' else 'right'
-                    self.flip_player_horizontally()
-                    self.gravity = 0
-
-    def apply_gravity(self):
-        self.gravity += 1
-        if self.player_gravity == 'left':
-            self.rect.x -= self.gravity
-            if self.rect.left <= 177:
-                self.rect.left = 177
-        else:
-            self.rect.x += self.gravity
-            if self.rect.right >= 430:
-                self.rect.right = 430
-
-    def animation_state(self):
-        if self.rect.bottom < 300:
-            self.image = self.player_jump
-        else:
-            self.player_index += 0.1
-            if self.player_index >= len(self.player_walk):
-                self.player_index = 0
-
-            self.image = self.player_walk[int(self.player_index)]
-
-    def update(self):
-        self.player_input()
-        self.apply_gravity()
-        self.animation_state()
-
-    def flip_player_horizontally(self):
-        for i, player_surface in enumerate(self.player_walk):
-            self.player_walk[i] = pygame.transform.flip(player_surface, flip_x=True, flip_y=False)
 
 
 class Obstacle(pygame.sprite.Sprite):
@@ -155,7 +85,7 @@ def collision_sprite():
     return True
 
 
-def draw_intro_text(text, height, width=config['screen_width'] // 2, color=(111, 196, 169)):
+def draw_intro_text(text, height, width=global_variables['screen_width'] // 2, color=(111, 196, 169)):
     message = game_font.render(text, False, color)
     message_rect = message.get_rect(center=(width, height))
     screen.blit(message, message_rect)
@@ -167,18 +97,18 @@ def draw_btn(btn, btn_rect):
     screen.blit(btn, btn_rect)
 
 
-def create_players(player_numbers):
+def create_players(player_numbers, game_mode):
     global players
 
     players = pygame.sprite.Group()
     for i in range(player_numbers):
-        players.add(Player())
+        players.add(Player(game_mode))
 
 
 if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode((config['screen_width'], config['screen_height']))
-    pygame.display.set_caption(config['title'])
+    screen = pygame.display.set_mode((global_variables['screen_width'], global_variables['screen_height']))
+    pygame.display.set_caption(global_variables['title'])
     clock = pygame.time.Clock()
     game_font = pygame.font.Font('Font/PixelType.ttf', 40)
     title_font = pygame.font.Font('Font/PixelType.ttf', 80)
@@ -192,25 +122,26 @@ if __name__ == '__main__':
     # Players
     players = None
 
-    # Snails
+    # Obstacles
     obstacle_group = pygame.sprite.Group()
+    global_variables['obstacle_groups'] = obstacle_group
 
     # Intro screen
     player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
     player_stand = pygame.transform.rotozoom(player_stand, 0, 3)
-    player_stand_rect = player_stand.get_rect(center=(config['screen_width'] // 2, 250))
+    player_stand_rect = player_stand.get_rect(center=(global_variables['screen_width'] // 2, 250))
 
     game_name = title_font.render('Snail Jumper', False, (111, 196, 169))
-    game_name_rectangle = game_name.get_rect(center=(config['screen_width'] // 2, 80))
+    game_name_rectangle = game_name.get_rect(center=(global_variables['screen_width'] // 2, 80))
 
     start_game_btn = game_font.render("Start Game", False, (111, 196, 169))
-    start_game_btn_rect = start_game_btn.get_rect(center=(config['screen_width'] // 2, 440))
+    start_game_btn_rect = start_game_btn.get_rect(center=(global_variables['screen_width'] // 2, 440))
 
     start_evolutionary_btn = game_font.render("Start With Neuroevolution", False, (111, 196, 169))
-    start_evolutionary_btn_rect = start_evolutionary_btn.get_rect(center=(config['screen_width'] // 2, 490))
+    start_evolutionary_btn_rect = start_evolutionary_btn.get_rect(center=(global_variables['screen_width'] // 2, 490))
 
     exit_btn = game_font.render("Exit", False, (111, 196, 169))
-    exit_btn_rect = exit_btn.get_rect(center=(config['screen_width'] // 2, 540))
+    exit_btn_rect = exit_btn.get_rect(center=(global_variables['screen_width'] // 2, 540))
 
     # Timer
     snail_timer = pygame.USEREVENT + 1
@@ -220,8 +151,8 @@ if __name__ == '__main__':
     pygame.time.set_timer(fly_timer, 800)
 
     while True:
-        events = pygame.event.get()
-        for event in events:
+        global_variables['events'] = pygame.event.get()
+        for event in global_variables['events']:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -240,9 +171,9 @@ if __name__ == '__main__':
                         game_active = True
                         start_time = pygame.time.get_ticks()
                         if clicked_start_btn:
-                            create_players(player_numbers=1)
+                            create_players(player_numbers=1, game_mode="Manual")
                         else:
-                            create_players(player_numbers=300)
+                            create_players(player_numbers=300, game_mode="Neuroevolution")
                     if clicked_exit_btn:
                         pygame.quit()
                         exit()
