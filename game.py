@@ -80,9 +80,14 @@ class Obstacle(pygame.sprite.Sprite):
 def collision_sprite():
     for player in players:
         if pygame.sprite.spritecollide(player, obstacle_group, dokill=False):
-            obstacle_group.empty()
-            return False
-    return True
+            player.kill()
+
+    no_players_left = len(players.sprites()) == 0
+    if no_players_left:
+        obstacle_group.empty()
+        return False
+    else:
+        return True
 
 
 def draw_intro_text(text, height, width=global_variables['screen_width'] // 2, color=(111, 196, 169)):
