@@ -227,7 +227,7 @@ if __name__ == '__main__':
                     prev_players = evolution.next_population_selection(prev_players + current_players, num_players)
                     current_players = evolution.generate_new_population(num_players, prev_players)
 
-                    create_players(game_mode, player_list=current_players)
+                    create_players(game_mode, player_list=prev_players + current_players)
 
                     generation += 1
                     start_time = pygame.time.get_ticks()
