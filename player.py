@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(midleft=(177, 656))
 
         self.player_gravity = 'left'
-        self.gravity = 0
+        self.gravity = 10
         self.game_mode = game_mode
 
         if self.game_mode == "Neuroevolution":
@@ -38,7 +38,7 @@ class Player(pygame.sprite.Sprite):
             layer_sizes = [3, 10, 2]  # TODO (Design your architecture here by changing the values)
             self.nn = NeuralNetwork(layer_sizes)
 
-    def think(self, screen_width, screen_height, obstacles):
+    def think(self, screen_width, screen_height, obstacles, player_x, player_y):
         """
         Creates input vector of the neural network and determines the gravity according to neural network's output.
 
@@ -48,6 +48,8 @@ class Player(pygame.sprite.Sprite):
         the obstacle as the key. The list is sorted based on the obstacle's 'y' point on the screen. Hence, obstacles[0]
         is the nearest obstacle to our player. It is also worthwhile noting that 'y' range is in [-100, 656], such that
         -100 means it is off screen (Topmost point) and 656 means in parallel to our player's 'y' point.
+        :param player_x: 'x' position of the player
+        :param player_y: 'y' position of the player
         """
         # TODO (change player's gravity here by calling self.change_gravity)
 
@@ -78,13 +80,8 @@ class Player(pygame.sprite.Sprite):
                     if pygame_event.key == pygame.K_SPACE:
                         self.player_gravity = "left" if self.player_gravity == 'right' else 'right'
                         self.flip_player_horizontally()
-                        self.gravity = 0
 
     def apply_gravity(self):
-        """
-        Increases the gravity to enable the player to jump.
-        """
-        self.gravity += 1
         if self.player_gravity == 'left':
             self.rect.x -= self.gravity
             if self.rect.left <= 177:
@@ -121,7 +118,7 @@ class Player(pygame.sprite.Sprite):
 
             self.think(global_variables['screen_width'],
                        global_variables['screen_height'],
-                       obstacles)
+                       obstacles, self.rect.x, self.rect.y)
 
         self.apply_gravity()
         self.animation_state()

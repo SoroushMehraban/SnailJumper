@@ -1,3 +1,5 @@
+import copy
+
 from player import Player
 
 
@@ -15,6 +17,12 @@ class Evolution:
 
     def next_population_selection(self, players, num_players):
         return players[: num_players]
+
+    def clone_player(self, player):
+        new_player = Player(self.game_mode)
+        new_player.nn = copy.deepcopy(player.nn)
+        new_player.fitness = player.fitness
+        return new_player
 
     def mutate(self, child):
         pass

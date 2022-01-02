@@ -1,5 +1,6 @@
 from sys import exit
-from random import randint, choice
+from numpy.random import randint, choice
+import numpy as np
 
 from evolution import Evolution
 from player import Player
@@ -8,7 +9,7 @@ import pygame
 
 
 def display_score():
-    score = int((pygame.time.get_ticks() - start_time) / 1000)
+    score = int((pygame.time.get_ticks() - start_time) / 100)
     score_surf = game_font.render(f"Score: {score}", False, (64, 64, 64))
     score_rect = score_surf.get_rect(center=(520, 50))
     screen.blit(score_surf, score_rect)
@@ -67,7 +68,7 @@ class Obstacle(pygame.sprite.Sprite):
 
             self.animation_index = 0
             self.image = self.frames[self.animation_index]
-            self.rect = self.image.get_rect(center=(303, randint(-100, -50)))
+            self.rect = self.image.get_rect(center=(randint(250, 350), randint(-100, -50)))
 
     def animation_state(self):
         self.animation_index += 0.1
@@ -86,11 +87,10 @@ class Obstacle(pygame.sprite.Sprite):
 
 
 def collision_sprite():
-    for player in players:
-        if pygame.sprite.spritecollide(player, obstacle_group, dokill=False):
-            player.kill()
+    for obstacle in obstacle_group:
+        pygame.sprite.spritecollide(obstacle, players, dokill=True)
 
-    return len(players.sprites()) == 0
+    return len(players) == 0
 
 
 def draw_intro_text(text, height, width=global_variables['screen_width'] // 2, color=(111, 196, 169)):
@@ -168,10 +168,10 @@ if __name__ == '__main__':
 
     # Timer
     snail_timer = pygame.USEREVENT + 1
-    pygame.time.set_timer(snail_timer, 400)
+    pygame.time.set_timer(snail_timer, 500)
 
     fly_timer = pygame.USEREVENT + 2
-    pygame.time.set_timer(fly_timer, 800)
+    pygame.time.set_timer(fly_timer, 4750)
 
     while True:
         global_variables['events'] = pygame.event.get()
@@ -198,6 +198,7 @@ if __name__ == '__main__':
                             create_players(mode=game_mode)
                         else:
                             game_mode = "Neuroevolution"
+                            np.random.seed(35)
                             current_players = evolution.generate_new_population(num_players)
                             prev_players = []
                             create_players(mode=game_mode, player_list=current_players)
@@ -229,6 +230,7 @@ if __name__ == '__main__':
                     create_players(game_mode, player_list=current_players)
 
                     generation += 1
+                    start_time = pygame.time.get_ticks()
 
             current_score = display_score()
             if game_mode == "Neuroevolution":
