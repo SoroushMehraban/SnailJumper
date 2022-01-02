@@ -1,5 +1,7 @@
 from sys import exit
 from random import randint, choice
+
+from evolution import Evolution
 from player import Player
 from variables import global_variables
 import pygame
@@ -82,7 +84,7 @@ def collision_sprite():
         if pygame.sprite.spritecollide(player, obstacle_group, dokill=False):
             player.kill()
 
-    no_players_left = len(players.sprites()) == 0
+    return len(players.sprites()) == 0
     if no_players_left:
         obstacle_group.empty()
         return False
@@ -102,12 +104,20 @@ def draw_btn(btn, btn_rect):
     screen.blit(btn, btn_rect)
 
 
-def create_players(player_numbers, game_mode):
+def create_players(mode, player_list=None):
     global players
 
     players = pygame.sprite.Group()
-    for i in range(player_numbers):
-        players.add(Player(game_mode))
+    if mode == "Manual":
+        players.add(Player(mode))
+    else:
+        for player in player_list:
+            players.add(player)
+
+
+def update_fitness():
+    for player in players:
+        player.fitness = current_score
 
 
 if __name__ == '__main__':
@@ -119,13 +129,18 @@ if __name__ == '__main__':
     title_font = pygame.font.Font('Font/PixelType.ttf', 80)
 
     game_active = False
+    evolution = Evolution()
+    game_mode = None
     start_time = 0
     best_score = 0
+    num_players = 300
 
     background_surface = pygame.image.load('graphics/Background.jpg').convert()
 
     # Players
     players = None
+    prev_players = []
+    current_players = []
 
     # Obstacles
     obstacle_group = pygame.sprite.Group()
@@ -176,9 +191,13 @@ if __name__ == '__main__':
                         game_active = True
                         start_time = pygame.time.get_ticks()
                         if clicked_start_btn:
-                            create_players(player_numbers=1, game_mode="Manual")
+                            game_mode = "Manual"
+                            create_players(mode=game_mode)
                         else:
-                            create_players(player_numbers=300, game_mode="Neuroevolution")
+                            game_mode = "Neuroevolution"
+                            current_players = evolution.generate_new_population(num_players)
+                            prev_players = []
+                            create_players(mode=game_mode, player_list=current_players)
                     if clicked_exit_btn:
                         pygame.quit()
                         exit()
@@ -195,9 +214,21 @@ if __name__ == '__main__':
             obstacle_group.update()
 
             # collision
-            game_active = collision_sprite()
+            no_players_left = collision_sprite()
+            if no_players_left:
+                obstacle_group.empty()
+                if game_mode == "Manual":
+                    game_active = False
+                else:
+                    prev_players = evolution.next_population_selection(prev_players + current_players, num_players)
+                    current_players = evolution.generate_new_population(num_players, prev_players)
+
+                    create_players(game_mode, player_list=current_players)
 
             current_score = display_score()
+            if game_mode == "Neuroevolution":
+                update_fitness()
+
             if current_score > best_score:
                 best_score = current_score
             display_best_score()

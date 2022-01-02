@@ -33,6 +33,8 @@ class Player(pygame.sprite.Sprite):
         self.game_mode = game_mode
 
         if self.game_mode == "Neuroevolution":
+            self.fitness = 0  # Initial fitness
+
             layer_sizes = [3, 10, 2]  # TODO (Design your architecture here by changing the values)
             self.nn = NeuralNetwork(layer_sizes)
 

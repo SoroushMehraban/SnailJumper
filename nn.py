@@ -28,5 +28,5 @@ class NeuralNetwork:
         :param x: Input vector which is a numpy array.
         :return: Output vector
         """
-        # x example: np.array([[0.1], [0.2], [0.3]])
+        # TODO (Implement forward function here)
         pass
