@@ -21,6 +21,12 @@ def display_best_score():
     screen.blit(score_surf, score_rect)
 
 
+def display_generation():
+    score_surf = small_game_font.render(f"Generation: {generation}", False, (64, 64, 64))
+    score_rect = score_surf.get_rect(topleft=(8, 50))
+    screen.blit(score_surf, score_rect)
+
+
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, obstacle_type, position=None):
         super().__init__()
@@ -85,11 +91,6 @@ def collision_sprite():
             player.kill()
 
     return len(players.sprites()) == 0
-    if no_players_left:
-        obstacle_group.empty()
-        return False
-    else:
-        return True
 
 
 def draw_intro_text(text, height, width=global_variables['screen_width'] // 2, color=(111, 196, 169)):
@@ -126,10 +127,12 @@ if __name__ == '__main__':
     pygame.display.set_caption(global_variables['title'])
     clock = pygame.time.Clock()
     game_font = pygame.font.Font('Font/PixelType.ttf', 40)
+    small_game_font = pygame.font.Font('Font/PixelType.ttf', 30)
     title_font = pygame.font.Font('Font/PixelType.ttf', 80)
 
     game_active = False
     evolution = Evolution()
+    generation = 1
     game_mode = None
     start_time = 0
     best_score = 0
@@ -225,8 +228,11 @@ if __name__ == '__main__':
 
                     create_players(game_mode, player_list=current_players)
 
+                    generation += 1
+
             current_score = display_score()
             if game_mode == "Neuroevolution":
+                display_generation()
                 update_fitness()
 
             if current_score > best_score:
