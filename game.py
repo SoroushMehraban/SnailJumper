@@ -121,6 +121,12 @@ def update_fitness():
         player.fitness = current_score
 
 
+def reset_timer_and_seed():
+    np.random.seed(35)
+    pygame.time.set_timer(snail_timer, 500)
+    pygame.time.set_timer(fly_timer, 4750)
+
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((global_variables['screen_width'], global_variables['screen_height']))
@@ -168,10 +174,11 @@ if __name__ == '__main__':
 
     # Timer
     snail_timer = pygame.USEREVENT + 1
-    pygame.time.set_timer(snail_timer, 500)
+    # pygame.time.set_timer(snail_timer, 500)
+
 
     fly_timer = pygame.USEREVENT + 2
-    pygame.time.set_timer(fly_timer, 4750)
+    # pygame.time.set_timer(fly_timer, 4750)
 
     while True:
         global_variables['events'] = pygame.event.get()
@@ -192,13 +199,13 @@ if __name__ == '__main__':
 
                     if clicked_start_btn or clicked_start_evolutionary_btn:
                         game_active = True
+                        reset_timer_and_seed()
                         start_time = pygame.time.get_ticks()
                         if clicked_start_btn:
                             game_mode = "Manual"
                             create_players(mode=game_mode)
                         else:
                             game_mode = "Neuroevolution"
-                            np.random.seed(35)
                             current_players = evolution.generate_new_population(num_players)
                             prev_players = []
                             create_players(mode=game_mode, player_list=current_players)
@@ -226,7 +233,7 @@ if __name__ == '__main__':
                 else:
                     prev_players = evolution.next_population_selection(prev_players + current_players, num_players)
                     current_players = evolution.generate_new_population(num_players, prev_players)
-
+                    reset_timer_and_seed()
                     create_players(game_mode, player_list=prev_players + current_players)
 
                     generation += 1

@@ -34,7 +34,8 @@ class Evolution:
         if first_generation:
             return [Player(self.game_mode) for _ in range(num_players)]
         else:
-            new_players = prev_players
+            # TODO ( Parent selection and child generation )
+            new_players = prev_players  # DELETE THIS AFTER YOUR IMPLEMENTATION
             return new_players
 
     def clone_player(self, player):
