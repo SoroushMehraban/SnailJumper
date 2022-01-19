@@ -58,8 +58,8 @@ class Obstacle(pygame.sprite.Sprite):
             else:
                 self.rect = self.image.get_rect(midright=(430, randint(-100, -50)))
         else:
-            fly_1 = pygame.image.load('graphics/Fly/Fly1.png').convert_alpha()
-            fly_2 = pygame.image.load('graphics/Fly/Fly2.png').convert_alpha()
+            fly_1 = pygame.image.load('Graphics/Fly/Fly1.png').convert_alpha()
+            fly_2 = pygame.image.load('Graphics/Fly/Fly2.png').convert_alpha()
 
             fly_1 = pygame.transform.rotozoom(fly_1, 0, 0.5)
             fly_2 = pygame.transform.rotozoom(fly_2, 0, 0.5)
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     best_score = 0
     num_players = 300
 
-    background_surface = pygame.image.load('graphics/Background.jpg').convert()
+    background_surface = pygame.image.load('Graphics/Background.jpg').convert()
 
     # Players
     players = None
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     global_variables['obstacle_groups'] = obstacle_group
 
     # Intro screen
-    player_stand = pygame.image.load('graphics/Player/player_stand.png').convert_alpha()
+    player_stand = pygame.image.load('Graphics/Player/player_stand.png').convert_alpha()
     player_stand = pygame.transform.rotozoom(player_stand, 0, 3)
     player_stand_rect = player_stand.get_rect(center=(global_variables['screen_width'] // 2, 250))
 

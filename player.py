@@ -10,8 +10,8 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
 
         # loading images
-        player_walk1 = pygame.image.load('graphics/Player/player_walk_1.png').convert_alpha()
-        player_walk2 = pygame.image.load('graphics/Player/player_walk_2.png').convert_alpha()
+        player_walk1 = pygame.image.load('Graphics/Player/player_walk_1.png').convert_alpha()
+        player_walk2 = pygame.image.load('Graphics/Player/player_walk_2.png').convert_alpha()
 
         # rotating -90 degree and scaling by factor of 0.5
         player_walk1 = pygame.transform.rotozoom(player_walk1, -90, 0.5)
