@@ -123,6 +123,8 @@ def update_fitness():
 
 def reset_timer_and_seed():
     np.random.seed(35)
+    pygame.time.set_timer(snail_timer, 0)
+    pygame.time.set_timer(fly_timer, 0)
     pygame.time.set_timer(snail_timer, 500)
     pygame.time.set_timer(fly_timer, 4750)
 
