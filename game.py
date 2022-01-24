@@ -113,6 +113,8 @@ def create_players(mode, player_list=None):
         players.add(Player(mode))
     else:
         for player in player_list:
+            player.change_gravity('left')
+            player.rect.x = 177
             players.add(player)
 
 
@@ -144,7 +146,7 @@ if __name__ == '__main__':
     game_mode = None
     start_time = 0
     best_score = 0
-    num_players = 300
+    num_players = 150
 
     background_surface = pygame.image.load('Graphics/Background.jpg').convert()
 
